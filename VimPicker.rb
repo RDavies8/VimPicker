@@ -1,14 +1,12 @@
 #/usr/bin/ruby
-
 require 'set'
 require 'fileutils'
 
-VIM_FILES_DIR = Dir.home + "/.VimPackages"
+VIM_FILES_DIR = Dir.home + "/Development/VimPackages"
 
 def getVimPackages
-  packageFolder = "/.VimPackages"
-  ignoredFiles = [".", "..", ".git"].to_set
-  packages = Dir.entries(Dir.home + packageFolder).select do |file|
+  ignoredFiles = [".", "..", ".git", "README.md"].to_set
+  packages = Dir.entries(VIM_FILES_DIR).select do |file|
     !ignoredFiles.include?(file)
   end
   return packages
@@ -30,11 +28,13 @@ def pickPackage(package)
     selectedPackageDir = VIM_FILES_DIR + "/" + package
 
     # Must remove .vim before link for some reason, otherwise wouldn't overwrite.
-    FileUtils.rm Dir.home + '/.vim'
+    if File.exists?('~/.vim') then
+      FileUtils.rm Dir.home + '/.vim'
+    end
     FileUtils.ln_s selectedPackageDir, Dir.home + "/.vim", :force => true
     FileUtils.ln_s selectedPackageDir + "/vimrc", Dir.home + "/.vimrc", :force => true
   else # Not a Valid Package
-    puts "Not a Valid VimPackage"
+    puts "Not a Valid VimPackage: " + package
   end
 end
 
@@ -42,6 +42,7 @@ def pickPackageFromList
   listPackages
   packages = getVimPackages
   while true do
+    print 'Select a package number: '
     input = $stdin.gets
     if is_num?(input)
       if input.to_i > 0 and input.to_i <= packages.size then
@@ -53,7 +54,7 @@ def pickPackageFromList
       puts 'Must put a valid number'
     end
   end
-  pickPackage packages[input.to_i + 1]
+  pickPackage packages[input.to_i - 1].to_s
 end
 
 def is_num?(str)
@@ -88,5 +89,3 @@ elsif ARGV[0] == "pick"
 else
   printHelpMessage
 end
-
-
