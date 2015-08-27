@@ -28,10 +28,10 @@ def pickPackage(package)
     selectedPackageDir = VIM_FILES_DIR + "/" + package
 
     # Must remove .vim before link for some reason, otherwise wouldn't overwrite.
-    if File.exists?('~/.vim') then
+    if File.exist?(Dir.home + '/.vim') then
       FileUtils.rm Dir.home + '/.vim'
     end
-    FileUtils.ln_s selectedPackageDir, Dir.home + "/.vim", :force => true
+    FileUtils.ln_sf selectedPackageDir, Dir.home + "/.vim"
     FileUtils.ln_s selectedPackageDir + "/vimrc", Dir.home + "/.vimrc", :force => true
   else # Not a Valid Package
     puts "Not a Valid VimPackage: " + package
