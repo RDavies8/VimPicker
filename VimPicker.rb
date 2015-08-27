@@ -57,6 +57,14 @@ def pickPackageFromList
   pickPackage packages[input.to_i - 1].to_s
 end
 
+def printCurrentPackage
+  if File.exist?(Dir.home + '/.vim') then
+    puts 'Current Package: ' + File.basename(File.readlink(Dir.home + '/.vim'))
+  else
+    puts 'No package selected'
+  end
+end
+
 def is_num?(str)
   !!Integer(str)
 rescue ArguementError, TypeError
@@ -74,7 +82,7 @@ end
 #Run
 puts "Ruby Script Worked!!"
 if ARGV.empty? then
-  printHelpMessage
+  printCurrentPackage
 elsif ARGV[0] == "list"
   listPackages
 elsif ARGV[0] == "pick"
